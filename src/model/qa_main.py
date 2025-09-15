@@ -13,13 +13,12 @@ from transformers.data.data_collator import default_data_collator
 from src.model.qa_feezer import GradualUnfreezingCallback
 from src.model.qa_model import QAModel
 from src.model.qa_trainer import QATrainer
-from src.model.qa_utils import postprocess_qa_predictions, compute_additional_metrics, get_optimizer_params, \
-    plot_training_logs
-
+from src.model.qa_utils import postprocess_qa_predictions, compute_additional_metrics, get_optimizer_params
 
 class QAModelTrainer:
     def __init__(self, model_name: str = "bert-base-uncased",
-                 data_dir: str = "/kaggle/input/squad-2-test-5/data/train_valid", save_dir: str = "./qa_checkpoints",
+                 data_dir: str = "/kaggle/input/squad-2-test/processed_squad_v2/train_valid",
+                 save_dir: str = "./qa_checkpoints",
                  batch_size_train: int = 16, batch_size_eval: int = 32, num_epochs: int = 3):
         self.model_name = model_name
         self.data_dir = data_dir
@@ -119,7 +118,6 @@ class QAModelTrainer:
         self.trainer.save_model(os.path.join(self.save_dir, "final"))
         df_logs = pd.DataFrame(self.trainer.state.log_history)
         df_logs.to_csv(os.path.join(self.save_dir, "training_logs.csv"), index=False)
-        plot_training_logs(df_logs, self.save_dir)
         print(f"Training finished. Model and logs saved to {self.save_dir}")
 
     def train_model(self):

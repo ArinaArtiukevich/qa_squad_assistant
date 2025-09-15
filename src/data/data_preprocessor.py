@@ -9,7 +9,7 @@ from transformers import AutoTokenizer
 class QAPreprocessor:
 
     def __init__(self, model_name: str = "bert-base-uncased", max_length: int = 384, stride: int = 128,
-                 data_dir: str = "./data"):
+                 data_dir: str = "./processed_squad_v2"):
         self.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
         self.max_length = max_length
         self.stride = stride
@@ -134,5 +134,5 @@ class QAPreprocessor:
 
 
 if __name__ == "__main__":
-    preprocessor = QAPreprocessor(data_dir="/Users/arynaartsiukevich/PycharmProjects/qa_assistant/src/input/data")
+    preprocessor = QAPreprocessor(data_dir="/Users/arynaartsiukevich/PycharmProjects/qa_assistant/src/input/processed_squad_v2")
     train_valid, test = preprocessor.prepare_datasets(val_size=0.1)

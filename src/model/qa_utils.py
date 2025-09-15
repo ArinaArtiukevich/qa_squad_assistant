@@ -158,53 +158,5 @@ def compute_additional_metrics(predictions, references):
     }
 
 
-def plot_training_logs(logs, save_dir):
-    os.makedirs(save_dir, exist_ok=True)
-    if not isinstance(logs, pd.DataFrame):
-        logs = pd.DataFrame(logs)
 
-    logs = logs.dropna(subset=["step"])
 
-    # Loss
-    if "loss" in logs.columns:
-        plt.figure(figsize=(8, 5))
-        plt.plot(logs["step"], logs["loss"], label="Train Loss", alpha=0.8)
-        if "eval_loss" in logs.columns:
-            plt.plot(logs["step"], logs["eval_loss"], label="Eval Loss", alpha=0.8)
-        plt.xlabel("Step")
-        plt.ylabel("Loss")
-        plt.title("Training & Evaluation Loss")
-        plt.legend()
-        plt.grid(True, linestyle="--", alpha=0.6)
-        plt.tight_layout()
-        plt.savefig(os.path.join(save_dir, "loss_curve.png"))
-        plt.close()
-
-    # F1 / EM
-    if "eval_f1" in logs.columns or "eval_exact" in logs.columns:
-        plt.figure(figsize=(8, 5))
-        if "eval_f1" in logs.columns:
-            plt.plot(logs["step"], logs["eval_f1"], label="Eval F1", marker="o", alpha=0.8)
-        if "eval_exact" in logs.columns:
-            plt.plot(logs["step"], logs["eval_exact"], label="Eval EM", marker="s", alpha=0.8)
-        plt.xlabel("Step")
-        plt.ylabel("Score")
-        plt.title("F1 and EM over Training")
-        plt.legend()
-        plt.grid(True, linestyle="--", alpha=0.6)
-        plt.tight_layout()
-        plt.savefig(os.path.join(save_dir, "f1_em_curve.png"))
-        plt.close()
-
-    # Extra metrics
-    if "eval_no_answer_accuracy" in logs.columns:
-        plt.figure(figsize=(8, 5))
-        plt.plot(logs["step"], logs["eval_no_answer_accuracy"], label="No-Answer Accuracy", marker="^", alpha=0.8)
-        plt.xlabel("Step")
-        plt.ylabel("Accuracy")
-        plt.title("No-Answer Accuracy over Training")
-        plt.legend()
-        plt.grid(True, linestyle="--", alpha=0.6)
-        plt.tight_layout()
-        plt.savefig(os.path.join(save_dir, "no_answer_accuracy.png"))
-        plt.close()

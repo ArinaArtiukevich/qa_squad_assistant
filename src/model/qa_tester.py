@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import torch
 from datasets import load_from_disk, load_dataset
+from safetensors.torch import load_file
 from transformers import AutoTokenizer, TrainingArguments
 from transformers.data.data_collator import default_data_collator
 
@@ -31,6 +32,11 @@ class QAModelTester:
         self.original_test = None
 
     def _load_model_and_data(self):
+        model = QAModel(model_name="bert-base-uncased")
+        state_dict = load_file(os.path.join(self.model_path, "model.safetensors"))
+        model.load_state_dict(state_dict)
+        model.eval()
+
         self.model = QAModel.from_pretrained(self.model_path)
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
 
@@ -50,6 +56,7 @@ class QAModelTester:
             args=TrainingArguments(
                 output_dir=self.results_dir,
                 per_device_eval_batch_size=self.batch_size,
+                report_to=[],
                 fp16=torch.cuda.is_available(),
             ),
             data_collator=default_data_collator,
